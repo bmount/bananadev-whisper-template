@@ -1,0 +1,4 @@
+sanic==22.6.2
+transformers
+accelerate
+git+https://github.com/openai/whisper.git 
