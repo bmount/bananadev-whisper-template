@@ -34,8 +34,7 @@ def input_to_tmpfile(model_inputs:dict) -> str:
     if wav_string is not None:
         wavBytes = BytesIO(base64.b64decode(wav_string.encode("ISO-8859-1")))
         return make_audio_tmpfile(wavBytes, '.wav')
-
-    return "input.mp3"
+    return None
 
 # Inference is ran for every server call
 # Reference your preloaded global model variable here.
@@ -44,8 +43,10 @@ def inference(model_inputs:dict) -> dict:
 
     # Parse out your arguments
     input_tmpfile = input_to_tmpfile(model_inputs)
+    if input_tmpfile is None:
+        return dict(error="Unable to find suitable audio input (checked 'mp3_b64' and 'wav_b64')")
     result = model.transcribe(input_tmpfile, initial_prompt=model_inputs.get('initial_prompt'))
     output = {"text":result["text"]}
     os.remove(input_tmpfile)
     # Return the results as a dictionary
-    return output
+    return result
